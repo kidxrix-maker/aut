@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Autumn Bloom</title>
+<style>
+:root{--bg:#fff3e0;--fg:#3b2410;--accent:#d9480f;--muted:#8a5a35;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b120a;--fg:#ffe8cf;--accent:#ff922b;--muted:#c99a6b}}
+:root[data-theme="dark"]{--bg:#1b120a;--fg:#ffe8cf;--accent:#ff922b;--muted:#c99a6b}
+html{height:100%}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--fg);font:1rem/1.5 system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px 16px;gap:12px;text-align:center}
+h1{margin:0;font-size:1.5rem}
+svg{width:min(92vw,440px);height:auto;aspect-ratio:1}
+#monitor{min-height:3em;color:var(--muted)}
+#monitor b{color:var(--accent)}
+.row{display:flex;gap:10px}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 22px;cursor:pointer;background:var(--accent);color:#fff}
+button.ghost{background:transparent;color:var(--fg);border:2px solid var(--accent)}
+button:active{transform:scale(.95)}
+</style>
+</head>
+<body>
+<h1>🍁 Autumn Bloom</h1>
+<svg id="tree" viewBox="-200 -200 400 400"><circle r="5" fill="#8a5a35"/></svg>
+<div id="monitor">Press paste. Every leaf lands on a spiral.</div>
+<div class="row">
+  <button id="textMakeBut">Paste</button>
+  <button id="ten" class="ghost">Paste ×10</button>
+  <button id="reset" class="ghost">Clear</button>
+</div>
+<script>
+let a = 1;
+let b = 0;
+const tree = document.getElementById("tree");
+const monitor = document.getElementById("monitor");
+const notes = ["Wow, it's autumn~", "Warm coffee weather~", "The sky is so high~", "Crunchy leaves underfoot~"];
+
+function textMake(){
+  a++;
+  b = b + a;
+  const angle = a * 137.508;               // golden angle
+  const r = 11 * Math.sqrt(a);
+  const hue = 8 + (b % 45);                // red to gold
+  let size = 7 + (a % 5);
+  if(a % 10 == 0){ size = 16; }            // every 10th is a big leaf
+  const leaf = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+  leaf.setAttribute("cx", r);
+  leaf.setAttribute("rx", size);
+  leaf.setAttribute("ry", size / 2.2);
+  leaf.setAttribute("fill", "hsl(" + hue + ",85%,52%)");
+  leaf.setAttribute("opacity", "0.9");
+  leaf.setAttribute("transform", "rotate(" + angle + ")");
+  leaf.animate([{transform:"rotate(" + angle + "deg) scale(0)"},{transform:"rotate(" + angle + "deg) scale(1)"}],{duration:350,easing:"ease-out"});
+  tree.appendChild(leaf);
+  monitor.innerHTML = "<b>" + a + " " + b + "</b> Okay, let's get started! " + notes[a % notes.length];
+}
+
+document.getElementById("textMakeBut").onclick = textMake;
+document.getElementById("ten").onclick = function(){
+  for(let i = 0; i < 10; i++){ setTimeout(textMake, i * 90); }
+};
+document.getElementById("reset").onclick = function(){
+  a = 1; b = 0;
+  tree.innerHTML = '<circle r="5" fill="#8a5a35"/>';
+  monitor.textContent = "Fresh start. Press paste.";
+};
+</script>
+</body>
+</html>
